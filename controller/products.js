@@ -3,4 +3,8 @@
 //     res.send("안녕하세요!");
 // }
 
-exports.createProduct = () => {};
+const productModel = require('../models/Product');
+
+exports.createProduct = () => {
+    productModel.create();
+};
