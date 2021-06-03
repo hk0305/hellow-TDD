@@ -18,8 +18,10 @@ const httpMocks = require('node-mocks-http');
 
 // 추가할 Json Type DATA 가져오기
 const newProduct = require('../data/new-product.json');
+const Product = require('../../models/Product');
 
 // Mock 함수를 사용한 모델 생성 및 스파이 역할
+// model 생성이 잘 되는지 확인
 productModel.create = jest.fn();
 
 // 테스트 전 설정
@@ -33,21 +35,33 @@ beforeEach(() => {
 
 // * Create Function이 있는지 테스트
 describe("Product Controller Create", () => {
-
+    
     beforeEach(() =>{
         req.body = newProduct;
     })
     
     // 테스트에 대한 설명
-    it("should have a createProduct function", () => {
+    it("Should have a createProduct function", () => {
         expect(typeof productController.createProduct).toBe("function");
     });
 
     // Product를 DB에 넣기
-    it("should call ProductModel.create", () => {
+    it("Should call ProductModel.create", () => {
         req.body = newProduct;
         productController.createProduct(req, res, next);
         expect(productModel.create).toBeCalledWith(newProduct);
+    });
+
+    it("Should return 201 response Code", () => {
+        productController.createProduct(req, res, next);
+        expect(res.statusCode).toBe(201);
+        expect(res._isEndCalled()).toBeTruthy();
+    });
+
+    it("Should return json body in response", () => {
+        productModel.create.mockReturnValue(newProduct);
+        productController.createProduct(req, res, next);
+        expect(res._getJSONData()).toStrictEqual(newProduct);
     });
 
 });
