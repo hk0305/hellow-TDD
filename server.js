@@ -1,3 +1,6 @@
+// 패키지 사용하기
+// npm install express mongoose --save
+// npm install jest supertest node-mocks-http
 const express = require('express');
 
 // Constants
