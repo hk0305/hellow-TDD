@@ -18,10 +18,12 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://hk0305:FZt2QWma3deMPSE@tddcluster1.tacig.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
     {
         useNewUrlParser: true,
-        seUnifiedTopology: true
+        useUnifiedTopology: true,
+        useFindAndModify: false
     }).then(()=> console.log('MongoDB Connected...'))
     .catch(err=> console.log(err));
 
+app.use(express.json());
 app.use("/api/products", productRoutes);
 
 app.get('/', (req, res) => {
