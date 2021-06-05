@@ -23,6 +23,7 @@ mongoose.connect('mongodb+srv://hk0305:FZt2QWma3deMPSE@tddcluster1.tacig.mongodb
     }).then(()=> console.log('MongoDB Connected...'))
     .catch(err=> console.log(err));
 
+// JSON으로 이루어진 request.body를 파싱한다.
 app.use(express.json());
 app.use("/api/products", productRoutes);
 

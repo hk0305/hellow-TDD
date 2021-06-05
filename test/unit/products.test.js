@@ -32,7 +32,7 @@ beforeEach(() => {
     // req, res 객체를 생성하여 통신하기
     req = httpMocks.createRequest();
     res = httpMocks.createResponse();
-    next = null;
+    next = jest.fn();
 })
 
 // * Create Function이 있는지 테스트
@@ -48,22 +48,36 @@ describe("Product Controller Create", () => {
     });
 
     // Product를 DB에 넣기
-    it("Should call ProductModel.create", () => {
-        req.body = newProduct;
-        productController.createProduct(req, res, next);
+    it("Should call ProductModel.create", async() => {
+        await productController.createProduct(req, res, next);
         expect(productModel.create).toBeCalledWith(newProduct);
     });
 
-    it("Should return 201 response Code", () => {
-        productController.createProduct(req, res, next);
+    it("Should return 201 response Code", async() => {
+        await productController.createProduct(req, res, next);
         expect(res.statusCode).toBe(201);
         expect(res._isEndCalled()).toBeTruthy();
     });
 
-    it("Should return json body in response", () => {
+    // Mock 함수로 호출된 productModel은
+    // "mockReturnValue"를 사용하여 값을 맵핑한다.
+    // "Accepts a value that will be returned whenever the mock function is called."
+    it("Should return json body in response", async() => {
         productModel.create.mockReturnValue(newProduct);
-        productController.createProduct(req, res, next);
+        await productController.createProduct(req, res, next);
         expect(res._getJSONData()).toStrictEqual(newProduct);
+    });
+
+    // error handling (Promise를 사용하여 reslove(=success)가 아닌 
+    // reject(=error)를 사용하여 해당 에러값에 대한 결과가 일치하는지 확인한다.
+    // beforeEach에 선언한 req.body인 newProduct의 description을 삭제하면
+    // 아래 결과가 Pass로 나온다.
+    it("Should handle errors", async() => {
+        const errorMsg = { message : "description property missing"};
+        const rejectedPromise = Promise.reject(errorMsg);
+        productModel.create.mockReturnValue(rejectedPromise);
+        await productController.createProduct(req, res, next);
+        expect(next).toBeCalledWith(errorMsg);
     });
 
 });
