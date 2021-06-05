@@ -8,6 +8,8 @@
 //     });
 // });
 
+// 테스트 명령어
+// npm test
 
 // * 함수 가져오기
 const productController = require('../../controller/products');
